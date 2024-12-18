@@ -1,0 +1,1542 @@
+1. Write a program to add two sparse matrix
+class SparseMatrix:
+    def __init__(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.data = {}  # Dictionary to store non-zero values with (row, col) as the key
+
+    def add_element(self, row, col, value):
+        if value != 0:
+            self.data[(row, col)] = value
+
+    def display(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                print(self.data.get((i, j), 0), end=" ")
+            print()
+
+    def add(self, other):
+        if self.rows != other.rows or self.cols != other.cols:
+            raise ValueError("Matrix dimensions do not match!")
+
+        result = SparseMatrix(self.rows, self.cols)
+
+        for (row, col), value in self.data.items():
+            result.add_element(row, col, value)
+
+        for (row, col), value in other.data.items():
+            if (row, col) in result.data:
+                result.data[(row, col)] += value
+            else:
+                result.add_element(row, col, value)
+
+        return result
+
+
+# Example usage
+if __name__ == "__main__":
+    # Create first sparse matrix
+    matrix1 = SparseMatrix(3, 3)
+    matrix1.add_element(0, 0, 5)
+    matrix1.add_element(1, 2, 8)
+    matrix1.add_element(2, 1, 3)
+
+    # Create second sparse matrix
+    matrix2 = SparseMatrix(3, 3)
+    matrix2.add_element(0, 1, 4)
+    matrix2.add_element(1, 2, 7)
+    matrix2.add_element(2, 2, 6)
+
+    print("Matrix 1:")
+    matrix1.display()
+
+    print("\nMatrix 2:")
+    matrix2.display()
+
+    # Add matrices
+    result = matrix1.add(matrix2)
+
+    print("\nResultant Matrix:")
+    result.display()
+
+
+
+
+
+2. Write a program to subtract two sparse matrix
+
+class SparseMatrix:
+    def __init__(self, rows, cols):
+        self.rows = rows
+        self.cols = cols
+        self.data = {}  # Dictionary to store non-zero values with (row, col) as the key
+
+    def add_element(self, row, col, value):
+        if value != 0:
+            self.data[(row, col)] = value
+
+    def display(self):
+        for i in range(self.rows):
+            for j in range(self.cols):
+                print(self.data.get((i, j), 0), end=" ")
+            print()
+
+    def subtract(self, other):
+        if self.rows != other.rows or self.cols != other.cols:
+            raise ValueError("Matrix dimensions do not match!")
+
+        result = SparseMatrix(self.rows, self.cols)
+
+        for (row, col), value in self.data.items():
+            result.add_element(row, col, value)
+
+        for (row, col), value in other.data.items():
+            if (row, col) in result.data:
+                result.data[(row, col)] -= value
+            else:
+                result.add_element(row, col, -value)
+
+        return result
+
+
+# Example usage
+if __name__ == "__main__":
+    matrix1 = SparseMatrix(3, 3)
+    matrix1.add_element(0, 0, 5)
+    matrix1.add_element(1, 2, 8)
+    matrix1.add_element(2, 1, 3)
+
+    matrix2 = SparseMatrix(3, 3)
+    matrix2.add_element(0, 1, 4)
+    matrix2.add_element(1, 2, 7)
+    matrix2.add_element(2, 2, 6)
+
+    print("Matrix 1:")
+    matrix1.display()
+
+    print("\nMatrix 2:")
+    matrix2.display()
+
+    result = matrix1.subtract(matrix2)
+
+    print("\nResultant Matrix (Matrix 1 - Matrix 2):")
+    result.display()
+
+
+
+
+
+3. Write a program to add two polynomials
+
+class Polynomial:
+    def __init__(self):
+        self.terms = {}  
+
+    def add_term(self, coeff, degree):
+        if degree in self.terms:
+            self.terms[degree] += coeff
+        else:
+            self.terms[degree] = coeff
+
+        if self.terms[degree] == 0:
+            del self.terms[degree]
+
+    def add(self, other):
+        result = Polynomial()
+
+        for degree, coeff in self.terms.items():
+            result.add_term(coeff, degree)
+
+        for degree, coeff in other.terms.items():
+            result.add_term(coeff, degree)
+
+        return result
+
+    def display(self):
+        if not self.terms:
+            print("0")
+            return
+
+        sorted_terms = sorted(self.terms.items(), key=lambda x: -x[0])
+        result = []
+        for degree, coeff in sorted_terms:
+            term = f"{coeff}x^{degree}" if degree > 0 else str(coeff)
+            result.append(term)
+        print(" + ".join(result))
+
+
+# Example usage
+if __name__ == "__main__":
+    # Create first polynomial
+    poly1 = Polynomial()
+    poly1.add_term(3, 2)  # 3x^2
+    poly1.add_term(5, 1)  # 5x^1
+    poly1.add_term(4, 0)  # 4 (constant term)
+
+    poly2 = Polynomial()
+    poly2.add_term(2, 2)  # 2x^2
+    poly2.add_term(-5, 1) # -5x^1
+    poly2.add_term(6, 0)  # 6 (constant term)
+
+    print("Polynomial 1:")
+    poly1.display()
+
+    print("\nPolynomial 2:")
+    poly2.display()
+
+    # Add polynomials
+    result = poly1.add(poly2)
+
+    print("\nResultant Polynomial:")
+    result.display()
+
+
+
+
+4. Write a program to multiply two polynomials
+
+class Polynomial:
+    def __init__(self):
+        self.terms = {} 
+
+    def add_term(self, coeff, degree):
+        if degree in self.terms:
+            self.terms[degree] += coeff
+        else:
+            self.terms[degree] = coeff
+
+        if self.terms[degree] == 0:
+            del self.terms[degree]
+
+    def multiply(self, other):
+        result = Polynomial()
+
+        for degree1, coeff1 in self.terms.items():
+            for degree2, coeff2 in other.terms.items():
+                new_degree = degree1 + degree2
+                new_coeff = coeff1 * coeff2
+                result.add_term(new_coeff, new_degree)
+        return result
+
+    def display(self):
+        if not self.terms:
+            print("0")
+            return
+
+        sorted_terms = sorted(self.terms.items(), key=lambda x: -x[0])
+        result = []
+        for degree, coeff in sorted_terms:
+            if coeff > 0 and len(result) > 0:
+                result.append(f"+ {coeff}x^{degree}" if degree > 0 else f"+ {coeff}")
+            else:
+                result.append(f" {coeff}x^{degree}" if degree > 0 else f" {coeff}")
+        print(" ".join(result))
+
+if __name__ == "__main__":
+    poly1 = Polynomial()
+    poly1.add_term(3, 2)  # 3x^2
+    poly1.add_term(4, 1)  # 4x^1
+    poly1.add_term(2, 0)  # 2 (constant term)
+
+    poly2 = Polynomial()
+    poly2.add_term(1, 1)  # x^1
+    poly2.add_term(2, 0)  # 2 (constant term)
+
+    print("Polynomial 1:")
+    poly1.display()
+
+    print("\nPolynomial 2:")
+    poly2.display()
+
+    result = poly1.multiply(poly2)
+
+    print("\nResultant Polynomial (Product):")
+    result.display()
+
+
+
+
+5. Write a program to create singly linear linked list for insert delete search print operation using menu driven program
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+class SinglyLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert(self, data):
+        new_node = Node(data)
+        if self.head is None:
+            self.head = new_node
+            print(f"Inserted {data} as the first node.")
+        else:
+            current = self.head
+            while current.next is not None:
+                current = current.next
+            current.next = new_node
+            print(f"Inserted {data} at the end of the list.")
+
+    def delete(self, data):
+        if self.head is None:
+            print("The list is empty. Nothing to delete.")
+            return
+
+        if self.head.data == data:
+            self.head = self.head.next
+            print(f"Deleted {data} from the list.")
+            return
+
+        current = self.head
+        while current.next is not None and current.next.data != data:
+            current = current.next
+
+        if current.next is None:
+            print(f"{data} not found in the list.")
+        else:
+            current.next = current.next.next
+            print(f"Deleted {data} from the list.")
+
+    def search(self, data):
+        current = self.head
+        position = 0
+        while current is not None:
+            if current.data == data:
+                print(f"{data} found at position {position}.")
+                return
+            current = current.next
+            position += 1
+        print(f"{data} not found in the list.")
+
+    def print_list(self):
+        if self.head is None:
+            print("The list is empty.")
+        else:
+            current = self.head
+            print("Linked List:", end=" ")
+            while current is not None:
+                print(current.data, end=" -> ")
+                current = current.next
+            print("None")
+
+def menu():
+    linked_list = SinglyLinkedList()
+
+    while True:
+        print("\nMenu:")
+        print("1. Insert")
+        print("2. Delete")
+        print("3. Search")
+        print("4. Print")
+        print("5. Exit")
+        choice = int(input("Enter your choice (1-5): "))
+
+        if choice == 1:
+            data = int(input("Enter the value to insert: "))
+            linked_list.insert(data)
+        elif choice == 2:
+            data = int(input("Enter the value to delete: "))
+            linked_list.delete(data)
+        elif choice == 3:
+            data = int(input("Enter the value to search: "))
+            linked_list.search(data)
+        elif choice == 4:
+            linked_list.print_list()
+        elif choice == 5:
+            print("Exiting the program. Goodbye!")
+            break
+        else:
+            print("Invalid choice! Please try again.")
+
+if __name__ == "__main__":
+    menu()
+
+
+
+
+
+6. Write a program to create doubly circular linked list for insert delete search print operation using menu driven program     
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+        self.prev = None
+
+
+class DoublyCircularLinkedList:
+    def __init__(self):
+        self.head = None
+
+    def insert(self, data):
+        new_node = Node(data)
+        if self.head is None:
+            # First node in the list
+            self.head = new_node
+            self.head.next = self.head
+            self.head.prev = self.head
+            print(f"Inserted {data} as the first node.")
+        else:
+            tail = self.head.prev  # Last node
+            tail.next = new_node
+            new_node.prev = tail
+            new_node.next = self.head
+            self.head.prev = new_node
+            print(f"Inserted {data} at the end of the list.")
+
+    def delete(self, data):
+        if self.head is None:
+            print("The list is empty. Nothing to delete.")
+            return
+
+        current = self.head
+        while True:
+            if current.data == data:
+                if current.next == current:  # Single node in the list
+                    self.head = None
+                else:
+                    current.prev.next = current.next
+                    current.next.prev = current.prev
+                    if current == self.head:  # Deleting the head node
+                        self.head = current.next
+                print(f"Deleted {data} from the list.")
+                return
+            current = current.next
+            if current == self.head:
+                break
+
+        print(f"{data} not found in the list.")
+
+    def search(self, data):
+        if self.head is None:
+            print("The list is empty.")
+            return
+
+        current = self.head
+        position = 0
+        while True:
+            if current.data == data:
+                print(f"{data} found at position {position}.")
+                return
+            current = current.next
+            position += 1
+            if current == self.head:
+                break
+
+        print(f"{data} not found in the list.")
+
+    def print_list(self):
+        if self.head is None:
+            print("The list is empty.")
+            return
+
+        print("Doubly Circular Linked List:", end=" ")
+        current = self.head
+        while True:
+            print(f"{current.data} <->", end=" ")
+            current = current.next
+            if current == self.head:
+                break
+        print("(Head)")
+
+
+def menu():
+    dc_linked_list = DoublyCircularLinkedList()
+
+    while True:
+        print("\nMenu:")
+        print("1. Insert")
+        print("2. Delete")
+        print("3. Search")
+        print("4. Print")
+        print("5. Exit")
+        choice = int(input("Enter your choice (1-5): "))
+
+        if choice == 1:
+            data = int(input("Enter the value to insert: "))
+            dc_linked_list.insert(data)
+        elif choice == 2:
+            data = int(input("Enter the value to delete: "))
+            dc_linked_list.delete(data)
+        elif choice == 3:
+            data = int(input("Enter the value to search: "))
+            dc_linked_list.search(data)
+        elif choice == 4:
+            dc_linked_list.print_list()
+        elif choice == 5:
+            print("Exiting the program. Goodbye!")
+            break
+        else:
+            print("Invalid choice! Please try again.")
+
+if __name__ == "__main__":
+    menu()
+
+
+
+
+7. Write a program to check the parenthesis of expression is well formedness or not 
+
+def is_well_formed(expression):
+    stack = []
+
+    brackets = {')': '(', '}': '{', ']': '['}
+
+    for char in expression:
+        if char in brackets.values():
+            stack.append(char)
+        elif char in brackets.keys():
+            if stack and stack[-1] == brackets[char]:
+                stack.pop()
+            else:
+                return False
+
+    return len(stack) == 0
+
+expressions = [
+    "{[(a + b) * c] - d}",  # Well-formed
+    "[(a + b) * c) - d]",  # Not well-formed
+    "({[x * (y + z)]})",  # Well-formed
+    "{[a + b) * c}",  # Not well-formed
+    "",  # Well-formed (empty string)
+    "(((())))",  # Well-formed
+    "({[)]}"  # Not well-formed
+]
+
+# Process each expression
+for i, expr in enumerate(expressions, 1):
+    if is_well_formed(expr):
+        print(f"Expression {i}: '{expr}' is well-formed.")
+    else:
+        print(f"Expression {i}: '{expr}' is NOT well-formed.")
+
+
+
+
+
+8. Write a program to reverse the given string. 
+
+def reverse_string(string):
+    return string[::-1]
+
+
+# Test cases
+strings = [
+    "hello",
+    "Python",
+    "madam",
+    "racecar",
+    "12345",
+    " "
+]
+
+for i, s in enumerate(strings, 1):
+    reversed_string = reverse_string(s)
+    print(f"Original String {i}: '{s}', Reversed: '{reversed_string}'")
+
+
+
+
+
+9. Write a program to create stack using linked list and manipulate it using menu driven code 
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class Stack:
+    def __init__(self):
+        self.top = None
+
+    def is_empty(self):
+        return self.top is None
+
+    def push(self, data):
+        new_node = Node(data)
+        new_node.next = self.top
+        self.top = new_node
+        print(f"'{data}' pushed to stack.")
+
+    def pop(self):
+        if self.is_empty():
+            print("Stack is empty. Cannot pop.")
+        else:
+            popped_data = self.top.data
+            self.top = self.top.next
+            print(f"'{popped_data}' popped from stack.")
+
+    def peek(self):
+        if self.is_empty():
+            print("Stack is empty. Nothing to peek.")
+        else:
+            print(f"Top element is '{self.top.data}'.")
+
+    def display(self):
+        if self.is_empty():
+            print("Stack is empty.")
+        else:
+            current = self.top
+            print("Stack elements:")
+            while current:
+                print(current.data, end=" ")
+                current = current.next
+            print()
+
+def menu():
+    stack = Stack()
+    while True:
+        print("\nStack Operations Menu")
+        print("1. Push")
+        print("2. Pop")
+        print("3. Peek")
+        print("4. Display Stack")
+        print("5. Exit")
+
+        choice = int(input("Enter your choice (1-5): "))
+
+        if choice == 1:
+            data = input("Enter the data to push: ")
+            stack.push(data)
+        elif choice == 2:
+            stack.pop()
+        elif choice == 3:
+            stack.peek()
+        elif choice == 4:
+            stack.display()
+        elif choice == 5:
+            print("Exiting the program. Goodbye!")
+            break
+        else:
+            print("Invalid choice! Please try again.")
+
+if __name__ == "__main__":
+    menu()
+
+
+
+
+
+10. Write a program to create CQ using array and manipulate it using menu driven code 
+
+class CircularQueue:
+    def __init__(self, size):
+        self.size = size
+        self.queue = [None] * size
+        self.front = -1
+        self.rear = -1
+
+    def is_empty(self):
+        return self.front == -1
+
+    def is_full(self):
+        return (self.rear + 1) % self.size == self.front
+
+    def enqueue(self, data):
+        if self.is_full():
+            print("Queue is full. Cannot enqueue.")
+        else:
+            if self.front == -1:
+                self.front = 0  # Initialize front pointer if queue is empty
+            self.rear = (self.rear + 1) % self.size
+            self.queue[self.rear] = data
+            print(f"'{data}' added to queue.")
+
+    def dequeue(self):
+        if self.is_empty():
+            print("Queue is empty. Cannot dequeue.")
+        else:
+            dequeued_data = self.queue[self.front]
+            if self.front == self.rear:
+                self.front = self.rear = -1  # Queue becomes empty
+            else:
+                self.front = (self.front + 1) % self.size
+            print(f"'{dequeued_data}' removed from queue.")
+
+    def peek(self):
+        if self.is_empty():
+            print("Queue is empty. Nothing to peek.")
+        else:
+            print(f"Front element is '{self.queue[self.front]}'.")
+
+    def display(self):
+        if self.is_empty():
+            print("Queue is empty.")
+        else:
+            print("Queue elements:")
+            i = self.front
+            while True:
+                print(self.queue[i], end=" ")
+                if i == self.rear:
+                    break
+                i = (i + 1) % self.size
+            print()
+
+def menu():
+    size = int(input("Enter the size of the circular queue: "))
+    cq = CircularQueue(size)
+
+    while True:
+        print("\nCircular Queue Operations Menu")
+        print("1. Enqueue")
+        print("2. Dequeue")
+        print("3. Peek")
+        print("4. Display Queue")
+        print("5. Exit")
+
+        choice = int(input("Enter your choice (1-5): "))
+
+        if choice == 1:
+            data = input("Enter the data to enqueue: ")
+            cq.enqueue(data)
+        elif choice == 2:
+            cq.dequeue()
+        elif choice == 3:
+            cq.peek()
+        elif choice == 4:
+            cq.display()
+        elif choice == 5:
+            print("Exiting the program. Goodbye!")
+            break
+        else:
+            print("Invalid choice! Please try again.")
+
+
+if __name__ == "__main__":
+    menu()
+
+
+
+
+
+11. Write a program to reverse stack using queue 
+
+from queue import Queue
+
+class Stack:
+    def __init__(self):
+        self.stack = []
+
+    def is_empty(self):
+        return len(self.stack) == 0
+
+    def push(self, data):
+        self.stack.append(data)
+
+    def pop(self):
+        if not self.is_empty():
+            return self.stack.pop()
+        else:
+            print("Stack is empty.")
+            return None
+
+    def peek(self):
+        if not self.is_empty():
+            return self.stack[-1]
+        else:
+            print("Stack is empty.")
+            return None
+
+    def display(self):
+        if not self.is_empty():
+            print("Stack elements:", self.stack)
+        else:
+            print("Stack is empty.")
+
+def reverse_stack(stack):
+    q = Queue()
+
+    while not stack.is_empty():
+        q.put(stack.pop())
+
+    while not q.empty():
+        stack.push(q.get())
+
+def menu():
+    stack = Stack()
+
+    while True:
+        print("\nStack Operations Menu")
+        print("1. Push")
+        print("2. Pop")
+        print("3. Peek")
+        print("4. Display Stack")
+        print("5. Reverse Stack")
+        print("6. Exit")
+
+        choice = int(input("Enter your choice (1-6): "))
+
+        if choice == 1:
+            data = input("Enter the data to push: ")
+            stack.push(data)
+        elif choice == 2:
+            popped_data = stack.pop()
+            if popped_data:
+                print(f"'{popped_data}' popped from stack.")
+        elif choice == 3:
+            peek_data = stack.peek()
+            if peek_data:
+                print(f"Top element is '{peek_data}'.")
+        elif choice == 4:
+            stack.display()
+        elif choice == 5:
+            reverse_stack(stack)
+            print("Stack reversed using queue.")
+        elif choice == 6:
+            print("Exiting the program. Goodbye!")
+            break
+        else:
+            print("Invalid choice! Please try again.")
+
+if __name__ == "__main__":
+    menu()
+
+
+
+
+12. Write a program to convert infix expression to postfix expression
+
+class InfixToPostfix:
+    def __init__(self):
+        self.precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+        self.stack = []
+
+    def is_operand(self, ch):
+        return ch.isalnum()
+
+    def precedence_of(self, operator):
+        return self.precedence.get(operator, 0)
+
+    def infix_to_postfix(self, infix):
+        postfix = []
+        for ch in infix:
+            if self.is_operand(ch):
+                postfix.append(ch)
+            elif ch == '(':
+                self.stack.append(ch)
+            elif ch == ')':
+                while self.stack and self.stack[-1] != '(':
+                    postfix.append(self.stack.pop())
+                self.stack.pop()  # Pop the '(' from the stack
+            else:
+                while (self.stack and self.stack[-1] != '(' and
+                       self.precedence_of(ch) <= self.precedence_of(self.stack[-1])):
+                    postfix.append(self.stack.pop())
+                self.stack.append(ch)
+
+        while self.stack:
+            postfix.append(self.stack.pop())
+
+        return ''.join(postfix)
+
+def main():
+    infix_expr = "A*(B+C)"  # Hardcoded infix expression
+    converter = InfixToPostfix()
+    postfix_expr = converter.infix_to_postfix(infix_expr)
+    print(f"Infix expression: {infix_expr}")
+    print(f"Postfix expression: {postfix_expr}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+13. Write a program to convert infix to prefix expression
+
+class InfixToPrefix:
+    def __init__(self):
+        self.precedence = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3}
+        self.stack = []
+
+    def is_operand(self, ch):
+        return ch.isalnum()
+
+    def precedence_of(self, operator):
+        return self.precedence.get(operator, 0)
+
+    def infix_to_postfix(self, infix):
+        postfix = []
+        for ch in infix:
+            if self.is_operand(ch):
+                postfix.append(ch)
+            elif ch == '(':
+                self.stack.append(ch)
+            elif ch == ')':
+                while self.stack and self.stack[-1] != '(':
+                    postfix.append(self.stack.pop())
+                self.stack.pop()  # Pop the '(' from the stack
+            else:
+                while (self.stack and self.stack[-1] != '(' and
+                       self.precedence_of(ch) <= self.precedence_of(self.stack[-1])):
+                    postfix.append(self.stack.pop())
+                self.stack.append(ch)
+
+        while self.stack:
+            postfix.append(self.stack.pop())
+
+        return ''.join(postfix)
+
+    def infix_to_prefix(self, infix):
+        infix = infix[::-1]
+        infix = list(infix)
+
+        for i in range(len(infix)):
+            if infix[i] == '(':
+                infix[i] = ')'
+            elif infix[i] == ')':
+                infix[i] = '('
+
+        postfix = self.infix_to_postfix(infix)
+
+        return postfix[::-1]
+
+
+def main():
+    infix_expr = "A*(B+C)"  # Hardcoded infix expression
+    converter = InfixToPrefix()
+    prefix_expr = converter.infix_to_prefix(infix_expr)
+    print(f"Infix expression: {infix_expr}")
+    print(f"Prefix expression: {prefix_expr}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+14. Write a program to evaluate postfix expression
+
+class PostfixEvaluator:
+    def __init__(self):
+        self.operators = {'+', '-', '*', '/', '^'}
+
+    def evaluate(self, postfix):
+        stack = []
+
+        for token in postfix:
+            if token.isdigit():
+                stack.append(int(token))
+            elif token in self.operators:
+                operand2 = stack.pop()
+                operand1 = stack.pop()
+
+                if token == '+':
+                    result = operand1 + operand2
+                elif token == '-':
+                    result = operand1 - operand2
+                elif token == '*':
+                    result = operand1 * operand2
+                elif token == '/':
+                    result = operand1 / operand2
+                elif token == '^':
+                    result = operand1 ** operand2
+
+                stack.append(result)
+        return stack[-1]
+
+
+def main():
+    postfix_expr = "23*5+"  # Hardcoded postfix expression (equivalent to (2*3) + 5)
+    evaluator = PostfixEvaluator()
+    result = evaluator.evaluate(postfix_expr)
+    print(f"Postfix expression: {postfix_expr}")
+    print(f"Result: {result}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+15. Write a program to evaluate prefix expression
+
+class PrefixEvaluator:
+    def __init__(self):
+        self.operators = {'+', '-', '*', '/', '^'}
+
+    def evaluate(self, prefix):
+        stack = []
+
+        for token in reversed(prefix):
+            if token.isdigit():  # If the token is an operand (number)
+                stack.append(int(token))
+            elif token in self.operators:  # If the token is an operator
+                if len(stack) < 2:
+                    raise ValueError("Invalid prefix expression: Not enough operands for operation.")
+                operand1 = stack.pop()  # Pop operand 1
+                operand2 = stack.pop()  # Pop operand 2
+
+                if token == '+':
+                    result = operand1 + operand2
+                elif token == '-':
+                    result = operand1 - operand2
+                elif token == '*':
+                    result = operand1 * operand2
+                elif token == '/':
+                    result = operand1 / operand2
+                elif token == '^':
+                    result = operand1 ** operand2
+
+                stack.append(result)
+
+        if len(stack) != 1:
+            raise ValueError("Invalid prefix expression: Extra operands remain.")
+
+        return stack[-1]
+
+
+def main():
+    prefix_expr = "*+23 4"  # Equivalent to (2 + 3) * 4
+    evaluator = PrefixEvaluator()
+
+    try:
+        result = evaluator.evaluate(prefix_expr)
+        print(f"Prefix expression: {prefix_expr}")
+        print(f"Result: {result}")
+    except ValueError as e:
+        print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+16. Write a program to create Binary search tree and traverse it using recursive preorder, inorder, postorder methods.  
+
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.left = None
+        self.right = None
+
+class BinarySearchTree:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, data):
+        if self.root is None:
+            self.root = Node(data)
+        else:
+            self._insert_recursive(self.root, data)
+
+    def _insert_recursive(self, node, data):
+        if data < node.data:
+            if node.left is None:
+                node.left = Node(data)
+            else:
+                self._insert_recursive(node.left, data)
+        else:
+            if node.right is None:
+                node.right = Node(data)
+            else:
+                self._insert_recursive(node.right, data)
+
+    def preorder(self, node):
+        if node:
+            print(node.data, end=' ')
+            self.preorder(node.left)
+            self.preorder(node.right)
+
+    def inorder(self, node):
+        if node:
+            self.inorder(node.left)
+            print(node.data, end=' ')
+            self.inorder(node.right)
+
+    def postorder(self, node):
+        if node:
+            self.postorder(node.left)
+            self.postorder(node.right)
+            print(node.data, end=' ')
+
+    def traverse(self):
+        print("Preorder Traversal:")
+        self.preorder(self.root)
+        print("\nInorder Traversal:")
+        self.inorder(self.root)
+        print("\nPostorder Traversal:")
+        self.postorder(self.root)
+
+def main():
+    bst = BinarySearchTree()
+
+    bst.insert(50)
+    bst.insert(30)
+    bst.insert(20)
+    bst.insert(40)
+    bst.insert(70)
+    bst.insert(60)
+    bst.insert(80)
+
+    bst.traverse()
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+17. Write a program to create AVL tree and traverse it using recursive preorder, inorder, postorder methods.  
+
+class Node:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+        self.height = 1
+
+
+class AVLTree:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, key):
+        if not self.root:
+            self.root = Node(key)
+        else:
+            self.root = self._insert(self.root, key)
+
+    def _insert(self, node, key):
+        if not node:
+            return Node(key)
+
+        if key < node.key:
+            node.left = self._insert(node.left, key)
+        else:
+            node.right = self._insert(node.right, key)
+
+        node.height = 1 + max(self._get_height(node.left), self._get_height(node.right))
+
+        balance = self._get_balance(node)
+
+        if balance > 1 and key < node.left.key:
+            return self._right_rotate(node)
+
+        if balance < -1 and key > node.right.key:
+            return self._left_rotate(node)
+
+        if balance > 1 and key > node.left.key:
+            node.left = self._left_rotate(node.left)
+            return self._right_rotate(node)
+
+        if balance < -1 and key < node.right.key:
+            node.right = self._right_rotate(node.right)
+            return self._left_rotate(node)
+        return node
+
+    def _left_rotate(self, z):
+        y = z.right
+        T2 = y.left
+        y.left = z
+        z.right = T2
+        z.height = 1 + max(self._get_height(z.left), self._get_height(z.right))
+        y.height = 1 + max(self._get_height(y.left), self._get_height(y.right))
+        return y
+
+    def _right_rotate(self, y):
+        x = y.left
+        T2 = x.right
+        x.right = y
+        y.left = T2
+        y.height = 1 + max(self._get_height(y.left), self._get_height(y.right))
+        x.height = 1 + max(self._get_height(x.left), self._get_height(x.right))
+        return x
+
+    def _get_height(self, node):
+        if not node:
+            return 0
+        return node.height
+
+    def _get_balance(self, node):
+        if not node:
+            return 0
+        return self._get_height(node.left) - self._get_height(node.right)
+
+    def preorder(self, node):
+        if node:
+            print(node.key, end=' ')
+            self.preorder(node.left)
+            self.preorder(node.right)
+
+    def inorder(self, node):
+        if node:
+            self.inorder(node.left)
+            print(node.key, end=' ')
+            self.inorder(node.right)
+
+    def postorder(self, node):
+        if node:
+            self.postorder(node.left)
+            self.postorder(node.right)
+            print(node.key, end=' ')
+
+    def traverse(self):
+        print("Preorder Traversal:")
+        self.preorder(self.root)
+        print("\nInorder Traversal:")
+        self.inorder(self.root)
+        print("\nPostorder Traversal:")
+        self.postorder(self.root)
+
+
+# Example Usage
+def main():
+    avl = AVLTree()
+
+    avl.insert(10)
+    avl.insert(20)
+    avl.insert(30)
+    avl.insert(15)
+    avl.insert(25)
+    avl.insert(5)
+    avl.insert(1)
+
+    avl.traverse()
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+18. Write a program to implement graph using adjacency matrix and traverse it using BFT  and DFT
+
+from collections import deque
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices  # Number of vertices
+        self.graph = [[0] * vertices for _ in range(vertices)]  # Adjacency matrix
+
+    def add_edge(self, u, v):
+        self.graph[u][v] = 1  # Set the matrix value to 1 to indicate an edge from u to v
+        self.graph[v][u] = 1  # For an undirected graph, also set the reverse edge
+
+    def bfs(self, start):
+        visited = [False] * self.V  # Mark all vertices as not visited
+        queue = deque([start])  # Queue to manage the BFS
+        visited[start] = True  # Mark the start vertex as visited
+
+        print("Breadth-First Traversal (BFT):")
+        while queue:
+            node = queue.popleft()  # Dequeue a vertex from the front
+            print(node, end=" ")
+
+            for i in range(self.V):
+                if self.graph[node][i] == 1 and not visited[i]:  # If an edge exists and not visited
+                    queue.append(i)  # Enqueue the adjacent node
+                    visited[i] = True  # Mark it as visited
+        print()
+
+    def dfs(self, start):
+        visited = [False] * self.V  # Mark all vertices as not visited
+        print("Depth-First Traversal (DFT):")
+        self._dfs_helper(start, visited)
+        print()
+
+    def _dfs_helper(self, node, visited):
+        visited[node] = True  # Mark the node as visited
+        print(node, end=" ")  # Visit the node
+
+        for i in range(self.V):
+            if self.graph[node][i] == 1 and not visited[i]:  # If an edge exists and not visited
+                self._dfs_helper(i, visited)  # Recursively visit the adjacent node
+
+def main():
+    # Create a graph with 5 vertices
+    g = Graph(5)
+
+    # Add edges to the graph
+    g.add_edge(0, 1)
+    g.add_edge(0, 2)
+    g.add_edge(1, 3)
+    g.add_edge(1, 4)
+    g.add_edge(3, 4)
+
+    g.bfs(0)
+
+    g.dfs(0)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+19. Write a program to implement graph using adjacency list and traverse it using BFT  and DFT
+
+from collections import deque
+
+class Graph:
+    def __init__(self, vertices):
+        self.V = vertices  # Number of vertices
+        self.graph = {i: [] for i in range(vertices)}  # Adjacency list
+
+    def add_edge(self, u, v):
+        self.graph[u].append(v)  # Add v to the adjacency list of u
+        self.graph[v].append(u)  # For undirected graph, also add u to v's list
+
+    def bfs(self, start):
+        visited = [False] * self.V  # Mark all vertices as not visited
+        queue = deque([start])  # Queue to manage the BFS
+        visited[start] = True  # Mark the start vertex as visited
+
+        print("Breadth-First Traversal (BFT):")
+        while queue:
+            node = queue.popleft()  # Dequeue a vertex from the front
+            print(node, end=" ")
+
+            for neighbor in self.graph[node]:
+                if not visited[neighbor]:  # If not visited
+                    queue.append(neighbor)  # Enqueue the adjacent node
+                    visited[neighbor] = True  # Mark it as visited
+        print()
+
+    def dfs(self, start):
+        visited = [False] * self.V  # Mark all vertices as not visited
+        print("Depth-First Traversal (DFT):")
+        self._dfs_helper(start, visited)
+        print()
+
+    def _dfs_helper(self, node, visited):
+        visited[node] = True  # Mark the node as visited
+        print(node, end=" ")  # Visit the node
+
+        for neighbor in self.graph[node]:
+            if not visited[neighbor]:  # If not visited
+                self._dfs_helper(neighbor, visited)  # Recursively visit the adjacent node
+
+def main():
+    g = Graph(5)
+
+    # Add edges to the graph
+    g.add_edge(0, 1)
+    g.add_edge(0, 2)
+    g.add_edge(1, 3)
+    g.add_edge(1, 4)
+    g.add_edge(3, 4)
+
+    g.bfs(0)
+
+    g.dfs(0)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+20. Write a program to implement linear probing  hashing for insert and search operation
+
+class HashTable:
+    def __init__(self, size):
+        self.size = size
+        self.table = [None] * size  # Create an empty hash table with the given size
+
+    def _hash(self, key):
+        return key % self.size
+
+    def insert(self, key):
+        index = self._hash(key)
+
+        original_index = index
+        while self.table[index] is not None:
+            if self.table[index] == key:  # If the key already exists, do nothing
+                print(f"Key {key} already exists.")
+                return
+            index = (index + 1) % self.size  # Move to the next index in a circular manner
+            if index == original_index:  # If we have checked all slots, the table is full
+                print("Hash table is full, cannot insert.")
+                return
+        self.table[index] = key
+        print(f"Key {key} inserted at index {index}.")
+
+    def search(self, key):
+        index = self._hash(key)
+        original_index = index
+
+        while self.table[index] is not None:
+            if self.table[index] == key:
+                print(f"Key {key} found at index {index}.")
+                return
+            index = (index + 1) % self.size
+            if index == original_index:  # If we've checked all slots
+                break
+        print(f"Key {key} not found.")
+
+    def display(self):
+        print("Hash Table:")
+        for i in range(self.size):
+            print(f"Index {i}: {self.table[i]}")
+
+def main():
+    ht = HashTable(10)
+
+    ht.insert(20)
+    ht.insert(30)
+    ht.insert(15)
+    ht.insert(25)
+
+    ht.search(25)
+    ht.search(40)
+
+    ht.display()
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+21. Write a program to implement binary search operation
+
+
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1  # Initializing the left and right pointers
+
+    while left <= right:
+        mid = (left + right) // 2  # Calculate the middle index
+
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] > target:
+            right = mid - 1
+        else:
+            left = mid + 1
+    return -1
+
+
+def main():
+    arr = [1, 3, 5, 7, 9, 11, 13, 15, 17, 19]
+    target = 7
+    result = binary_search(arr, target)
+    if result != -1:
+        print(f"Element {target} found at index {result}.")
+    else:
+        print(f"Element {target} not found.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+22. Write a program to implement sequential search operation
+
+def sequential_search(arr, target):
+    for index, element in enumerate(arr):
+        if element == target:
+            return index  # If target is found, return the index
+    return -1
+
+def main():
+    arr = [5, 3, 7, 1, 9, 2, 8, 4]
+    target = 7
+    result = sequential_search(arr, target)
+
+    if result != -1:
+        print(f"Element {target} found at index {result}.")
+    else:
+        print(f"Element {target} not found.")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+23. Write a program to implement merge sort
+
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left_half = merge_sort(arr[:mid])
+    right_half = merge_sort(arr[mid:])
+    return merge(left_half, right_half)
+
+
+def merge(left, right):
+    merged = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] < right[j]:
+            merged.append(left[i])
+            i += 1
+        else:
+            merged.append(right[j])
+            j += 1
+    merged.extend(left[i:])
+    merged.extend(right[j:])
+    return merged
+
+def main():
+    arr = [38, 27, 43, 3, 9, 82, 10]
+    sorted_arr = merge_sort(arr)
+    print("Sorted array:", sorted_arr)
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+24. Write a program to implement bubble sort
+
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+    return arr
+
+def main():
+    arr = [64, 34, 25, 12, 22, 11, 90]
+    sorted_arr = bubble_sort(arr)
+    print("Sorted array:", sorted_arr)
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+25. Write a program to implement quick sort
+
+def quick_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) - 1]
+    left = [x for x in arr[:-1] if x <= pivot]
+    right = [x for x in arr[:-1] if x > pivot]
+    return quick_sort(left) + [pivot] + quick_sort(right)
+
+def main():
+    arr = [64, 34, 25, 12, 22, 11, 90]
+    sorted_arr = quick_sort(arr)
+    print("Sorted array:", sorted_arr)
+
+if __name__ == "__main__":
+    main()
